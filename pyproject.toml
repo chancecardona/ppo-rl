@@ -1,0 +1,11 @@
+[project]
+name = "ppo-rl"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "gym==0.22.0",
+    "huggingface-hub>=0.27.0",
+    "imageio-ffmpeg>=0.5.1",
+]
