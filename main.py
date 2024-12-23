@@ -24,6 +24,16 @@ from wasabi import Printer
 from parse_args import parse_args
 from ppo_policy import *
 from huggingface import *
+from openai_wrappers_normalize import NormalizeObservation, NormalizeReward
+
+### Install PyBullet correctly ###
+#from collections import UserDict
+#import gym.envs.registration
+#registry = UserDict(gym.envs.registration.registry)
+#registry.env_specs = gym.envs.registration.registry
+#gym.envs.registration.registry = registry
+import pybullet_envs
+##################################
 
 def make_env(env_id, seed, idx, capture_video, run_name):
     def thunk():
@@ -32,6 +42,16 @@ def make_env(env_id, seed, idx, capture_video, run_name):
         if capture_video:
             if idx == 0:
                 env = gym.wrappers.RecordVideo(env, f"videos/{run_name}")
+
+        # If continuous env:
+        env = gym.wrappers.ClipAction(env)
+        #env = gym.wrappers.NormalizeObservation(env)
+        env = NormalizeObservation(env)
+        env = gym.wrappers.TransformObservation(env, lambda obs: np.clip(obs, -10, 10))
+        #env = gym.wrappers.NormalizeReward(env)
+        env = NormalizeReward(env)
+        env = gym.wrappers.TransformReward(env, lambda reward: np.clip(reward, -10, 10))
+
         env.seed(seed)
         env.action_space.seed(seed)
         env.observation_space.seed(seed)
@@ -75,7 +95,7 @@ if __name__ == "__main__":
     envs = gym.vector.SyncVectorEnv(
         [make_env(args.env_id, args.seed + i, i, args.capture_video, run_name) for i in range(args.num_envs)]
     )
-    assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
+    assert isinstance(envs.single_action_space, gym.spaces.Box), "only continuous action space is supported"
 
     ### Init the RL Agent ###
     agent = Agent(envs)
@@ -100,6 +120,7 @@ if __name__ == "__main__":
     # TRY NOT TO MODIFY: start the game
     global_step = 0
     start_time = time.time()
+    #import pdb; pdb.set_trace()
     next_obs = torch.Tensor(envs.reset()).to(device)
     next_done = torch.zeros(args.num_envs).to(device)
     num_updates = args.total_timesteps // args.batch_size
@@ -182,7 +203,7 @@ if __name__ == "__main__":
                 end = start + args.minibatch_size
                 mb_inds = b_inds[start:end]
 
-                _, newlogprob, entropy, newvalue = agent.get_action_and_value(b_obs[mb_inds], b_actions.long()[mb_inds])
+                _, newlogprob, entropy, newvalue = agent.get_action_and_value(b_obs[mb_inds], b_actions[mb_inds])
                 logratio = newlogprob - b_logprobs[mb_inds]
                 ratio = logratio.exp()
 
