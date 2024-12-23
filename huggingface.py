@@ -1,21 +1,19 @@
 from huggingface_hub import HfApi, upload_folder
 from huggingface_hub.repocard import metadata_eval_result, metadata_save
 
+import numpy as np
 from pathlib import Path
 import datetime
 import tempfile
 import json
 import shutil
 import imageio
-
-from wasabi import Printer
-msg = Printer()
-
-# Adding HuggingFace argument
-parser.add_argument("--repo-id", type=str, default="kismet163/ppo-LunarLander-v1", help="id of the model repository from the Hugging Face Hub {username/repo_name}")
+import torch
 
 def package_to_hub(repo_id,
                 model,
+                msg,
+                device,
                 hyperparameters,
                 eval_env,
                 video_fps=30,
@@ -60,7 +58,8 @@ def package_to_hub(repo_id,
     # Step 3: Evaluate the model and build JSON
     mean_reward, std_reward = _evaluate_agent(eval_env,
                                            10,
-                                           model)
+                                           model,
+                                           device)
 
     # First get datetime
     eval_datetime = datetime.datetime.now()
@@ -80,7 +79,7 @@ def package_to_hub(repo_id,
 
     # Step 4: Generate a video
     video_path =  tmpdirname / "replay.mp4"
-    record_video(eval_env, model, video_path, video_fps)
+    record_video(eval_env, model, video_path, device, video_fps)
 
     # Step 5: Generate the model card
     generated_model_card, metadata = _generate_model_card("PPO", hyperparameters.env_id, mean_reward, std_reward, hyperparameters)
@@ -104,7 +103,7 @@ def package_to_hub(repo_id,
   return repo_url
 
 
-def _evaluate_agent(env, n_eval_episodes, policy):
+def _evaluate_agent(env, n_eval_episodes, policy, device):
   """
   Evaluate the agent for ``n_eval_episodes`` episodes and returns average reward and std of reward.
   :param env: The evaluation environment
@@ -133,7 +132,7 @@ def _evaluate_agent(env, n_eval_episodes, policy):
   return mean_reward, std_reward
 
 
-def record_video(env, policy, out_directory, fps=30):
+def record_video(env, policy, out_directory, device, fps=30):
   images = []
   done = False
   state = env.reset()

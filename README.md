@@ -13,11 +13,11 @@ uv pip install -r requirements.txt --break-system-packages
 ## Running
 LunarLander Environment (default)
 ```bash
-uv run main.py
+uv run main.py --env-id "CartPole-v1"
 ```
 
 Doom Environment
 ```bash
-uv run main.py -e doom
+uv run main.py --env-id doom
 ```
 

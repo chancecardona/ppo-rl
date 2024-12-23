@@ -59,3 +59,12 @@ def parse_args():
         help="the maximum norm for the gradient clipping")
     parser.add_argument("--target-kl", type=float, default=0.02,
         help="the target KL divergence threshold")
+
+    # Adding HuggingFace argument
+    parser.add_argument("--repo-id", type=str, default="kismet163/ppo-LunarLander-v2", help="id of the model repository from the Hugging Face Hub {username/repo_name}")
+
+    args = parser.parse_args()
+    args.batch_size = int(args.num_envs * args.num_steps)
+    args.minibatch_size = int(args.batch_size // args.num_minibatches)
+    # fmt: on
+    return args

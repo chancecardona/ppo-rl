@@ -23,6 +23,7 @@ from wasabi import Printer
 
 from parse_args import parse_args
 from ppo_policy import *
+from huggingface import *
 
 def make_env(env_id, seed, idx, capture_video, run_name):
     def thunk():
@@ -248,6 +249,8 @@ if __name__ == "__main__":
     
     package_to_hub(repo_id = args.repo_id,
                     model = agent, # The model we want to save
+                    msg = msg,
+                    device = device,
                     hyperparameters = args,
                     eval_env = gym.make(args.env_id),
                     logs= f"runs/{run_name}",
