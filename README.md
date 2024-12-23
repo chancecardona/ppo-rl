@@ -13,11 +13,11 @@ uv pip install -r requirements.txt --break-system-packages
 ## Running
 LunarLander Environment (default)
 ```bash
-python3 main.py
+uv run main.py
 ```
 
 Doom Environment
 ```bash
-python3 main.py -e doom
+uv run main.py -e doom
 ```
 
