@@ -78,7 +78,15 @@ if __name__ == "__main__":
     assert isinstance(envs.single_action_space, gym.spaces.Discrete), "only discrete action space is supported"
 
     ### Init the RL Agent ###
-    agent = Agent(envs).to(device)
+    agent = Agent(envs)
+    # Use Multi GPU if available
+    if torch.cuda.device_count() > 1:
+        print(f"Using multiple ({torch.cuda.device_count()}) GPUs! Nice.")
+        agent = nn.DataParallel(agent)
+    agent.to(device)
+    if torch.cuda.device_count() > 1:
+        agent = agent.module
+
     optimizer = optim.Adam(agent.parameters(), lr=args.learning_rate, eps=1e-5)
 
     # ALGO Logic: Storage setup
@@ -146,8 +154,6 @@ if __name__ == "__main__":
                     delta = rewards[t] + args.gamma * nextvalues * nextnonterminal - values[t]
                     advantages[t] = lastgaelam = delta + args.gamma * args.gae_lambda * nextnonterminal * lastgaelam
                 returns = advantages + values
-            # Default Advantage Estimation
-            else:
                 returns = torch.zeros_like(rewards).to(device)
                 for t in reversed(range(args.num_steps)):
                     if t == args.num_steps - 1:

@@ -1,4 +1,5 @@
 ## Proximal Policy Optimization RL
+This repo will automatically utilize PyTorch to use multiple GPUs if available.
 
 ### Installation using UV
 ```bash
