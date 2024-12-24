@@ -7,10 +7,11 @@ The main script will automatically utilize PyTorch to use multiple GPUs if avail
 The environments are available from [PyBullet-Gym](https://github.com/benelot/pybullet-gym).
 Unfortunately I could not get the Mujoco envs to work no matter what Gym and PyBullet / Mujoco combinations I used.
 In the the mean time PyBullet will need to suffice as this is a known issue. 
-At least until I can test [Genesis World Model](https://github.com/yizhouzhao/genesis/blob/main/examples/locomotion/go2_env.py) example of setting up a gym-like env for Genesis World Model. 
+At least until I can test [Genesis World Model](https://github.com/yizhouzhao/genesis/blob/main/examples/locomotion/go2_env.py) which can create massively parallel physics sims, capable of setting up vectorized gym-like environments (see example). 
 
-HuggingFace Metrics (showing the results and a video of performance) at: [huggingface.co](https://huggingface.co/kismet163/ReinforcePPO)
-WandB (Weights & Biases) Metrics (showing training info such as the loss convergenge, GPU use, etc) at: [WandB.ai](https://wandb.ai/chance-cardona/PPO-RL?nw=nwuserchancecardona)
+
+HuggingFace Metrics (showing the results and a video of performance) at: [huggingface.co](https://huggingface.co/kismet163/ReinforcePPO)  
+WandB (Weights & Biases) Metrics (showing training info such as the loss convergenge, GPU use, etc) at: [WandB.ai](https://wandb.ai/chance-cardona/PPO-RL?nw=nwuserchancecardona)  
 
 
 ### Installation (UV)
