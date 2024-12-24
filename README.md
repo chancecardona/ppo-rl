@@ -24,12 +24,15 @@ uv sync
 ### Login to Online Services:
 
 #### huggingface
-`huggingface-cli login` after creating an identity token at 
+```huggingface-cli login``` 
+After creating an identity token at [huggingface.co](huggingface.co)
 
 #### wandb
 ```bash
 wandb login
 ```
+after you have a WandB account (go to settings for the API key).
+
 
 ## Running (Training and Evaluating)
 
