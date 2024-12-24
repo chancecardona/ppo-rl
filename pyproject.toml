@@ -7,15 +7,16 @@ requires-python = ">=3.9"
 dependencies = [
     "clang>=17.0.6",
     "cython<3",
-    "gym[box2d]==0.22",
+    "gym==0.17.0",
     "huggingface-hub>=0.27.0",
-    "imageio>=2.36.1",
     "imageio-ffmpeg>=0.5.1",
     "mujoco>=3.2.6",
     "mujoco-py>=2.1.2.14",
     "numpy==1.23.5",
+    "pybullet==3.1.8",
     "swig>=4.3.0",
     "tensorboard>=2.18.0",
     "torch>=2.5.1",
+    "wandb>=0.19.1",
     "wasabi>=1.1.3",
 ]

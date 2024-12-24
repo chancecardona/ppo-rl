@@ -119,8 +119,8 @@ def _evaluate_agent(env, n_eval_episodes, policy, device):
 
     while done is False:
       state = torch.Tensor(state).to(device)
-      action, _, _, _ = policy.get_action_and_value(state)
-      new_state, reward, done, info = env.step(action.cpu().numpy())
+      action, logprob, _, _ = policy.get_action_and_value(state.unsqueeze(0))
+      new_state, reward, done, info = env.step(action.squeeze(0).cpu().numpy())
       total_rewards_ep += reward
       if done:
         break
@@ -141,8 +141,8 @@ def record_video(env, policy, out_directory, device, fps=30):
   while not done:
     state = torch.Tensor(state).to(device)
     # Take the action (index) that have the maximum expected future reward given that state
-    action, _, _, _  = policy.get_action_and_value(state)
-    state, reward, done, info = env.step(action.cpu().numpy()) # We directly put next_state = state for recording logic
+    action, logprob, _, _  = policy.get_action_and_value(state.unsqueeze(0))
+    state, reward, done, info = env.step(action.squeeze(0).cpu().numpy()) # We directly put next_state = state for recording logic
     img = env.render(mode='rgb_array')
     images.append(img)
   imageio.mimsave(out_directory, [np.array(img) for i, img in enumerate(images)], fps=fps)
