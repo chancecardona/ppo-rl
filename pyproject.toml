@@ -17,5 +17,6 @@ dependencies = [
     "swig>=4.3.0",
     "tensorboard>=2.18.0",
     "torch>=2.5.1",
+    "wandb>=0.19.1",
     "wasabi>=1.1.3",
 ]

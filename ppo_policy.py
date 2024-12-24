@@ -44,7 +44,10 @@ class Agent(nn.Module):
         probs = Normal(action_mean, action_std)
         if action is None:
             action = probs.sample()
-        return action, probs.log_prob(action).sum(1), probs.entropy().sum(1), self.critic(x)
+
+        log_prob_sum = probs.log_prob(action).sum(1)
+        entropy_sum = probs.entropy().sum(1)
+        return action, log_prob_sum, entropy_sum, self.critic(x)
 
     # Only used in discrete action spaces.
     def get_discrete_action_and_value(self, x, action=None):
